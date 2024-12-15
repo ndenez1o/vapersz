@@ -17,42 +17,67 @@ function Checkout() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   alert("Pago realizado con éxito!");
-  // };
-    const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const message = generateWhatsAppMessage(Object.fromEntries(formData));
-    const phoneNumber = "+5492346619951";
-    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`);
-  };
-
   const location = useLocation();
   const { cart, totalPrice } = location.state || { cart: [], totalPrice: 0 };
 
-  const generateWhatsAppMessage = (formData) => {
+  const generateWhatsAppMessage = () => {
+    if (cart.length === 0) {
+      return "El carrito está vacío.";
+    }
+
     const productList = cart
       .map(
         (item) =>
-          `${item.brand} - ${item.model} (${item.quantity || 1} x $${item.price})`
+          `- ${item.brand} ${item.model} (${item.quantity || 1} x $${item.price})`
       )
       .join("\n");
-    return `Hola, mi nombre es ${formData.name}. 
-He realizado la siguiente compra: 
+
+    return `
+Hola, mi nombre es ${formData.name}. 
+He realizado la siguiente compra:
 ${productList}
-Total: $${totalPrice.toFixed(2)}
-Dirección: ${formData.address}, ${formData.city}, CP ${formData.zipCode}.
-Correo: ${formData.email}`;
+\nTotal: $${totalPrice.toFixed(2)}
+\nDirección de envío:
+${formData.address}, ${formData.city}, CP ${formData.zipCode}.
+\nContacto: ${formData.email}
+    `.trim();
   };
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+
+  if (!formData.name || !formData.email || !formData.address || !cart.length) {
+    alert("Por favor, completa todos los campos y asegúrate de que el carrito no esté vacío.");
+    return;
+  }
+
+  const message = generateWhatsAppMessage();
+  const phoneNumber = "+5492346619951";
+
+  // Codificar el mensaje y crear la URL correctamente
+  const encodedMessage = encodeURIComponent(message);
+
+  // Usar WhatsApp Web con un redireccionamiento
+  const whatsappURL = `https://web.whatsapp.com/send?phone=${phoneNumber}&text=${encodedMessage}`;
+
+  console.log("WhatsApp Web URL:", whatsappURL);
+
+  window.location.href = whatsappURL;
+
+  setTimeout(() => {
+    alert("No pudimos abrir WhatsApp correctamente. Por favor, intenta manualmente.");
+  }, 3000);
+};
+
 
   return (
     <>
       <h1 className="text-2xl font-bold text-center text-slate-100 mt-24">
         ¡Ya casi completamos la compra!
       </h1>
-      <p className="text-center text-slate-100">Solo unos pasos más y es tuyo</p>
+      <p className="text-center text-slate-100">
+        Solo unos pasos más y es tuyo
+      </p>
 
       <div className="max-w-4xl mx-auto p-8 bg-slate-100 rounded shadow-md mt-12 mb-12">
         <h1 className="text-2xl font-bold text-center text-emerald-600 mb-6">
