@@ -1,12 +1,32 @@
 import React, { useState } from "react";
-import { FaShoppingCart, FaUser } from "react-icons/fa";
+import Checkout from "../../pages/checkout";
+import { FaShoppingCart } from "react-icons/fa";
 import Logo from "../../assets/logo.svg";
-
+import { useCart } from "../../context/CartContext";
+import { useNavigate } from "react-router-dom"; // Para redirigir a Checkout
 function Navbar() {
+  const { cart, removeFromCart } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const cartItemCount = cart.reduce(
+    (total, item) => total + (item.quantity || 1),
+    0
+  );
+
+  const totalPrice = cart.reduce(
+    (total, item) => total + item.price * (item.quantity || 1),
+    0
+  );
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen);
+  };
+
+  const finishBuy = () => {
+    // Al finalizar, redirigir al Checkout
+    setIsCartOpen(false);
+    navigate("/checkout");
   };
 
   return (
@@ -26,13 +46,15 @@ function Navbar() {
           <div className="space-x-4 flex">
             <button
               onClick={toggleCart}
-              className="text-emerald-600 hover:text-green-400 focus:outline-none"
+              className="relative text-emerald-600 hover:text-green-400 focus:outline-none"
             >
               <FaShoppingCart size={20} />
+              {cartItemCount > 0 && (
+                <span className="absolute top-2 right-0 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center">
+                  {cartItemCount}
+                </span>
+              )}
             </button>
-            {/* <a href="/login" className="text-emerald-600 hover:text-green-400">
-              <FaUser size={20} />
-            </a> */}
           </div>
         </div>
       </div>
@@ -44,13 +66,50 @@ function Navbar() {
       >
         <div className="p-4">
           <h2 className="text-lg font-bold text-emerald-600">Tu Carrito</h2>
-          <p className="mt-4">No hay productos en el carrito.</p>
+          {cart.length === 0 ? (
+            <p className="mt-4">No hay productos en el carrito.</p>
+          ) : (
+            <>
+              <ul className="mt-4 space-y-2">
+                {cart.map((product, index) => (
+                  <li
+                    key={index}
+                    className="flex justify-between items-center border-b pb-2"
+                  >
+                    <div>
+                      <span className="block font-semibold">
+                        {product.brand} - {product.model}
+                      </span>
+                      <span className="block text-sm text-gray-500">
+                        ${product.price} x {product.quantity || 1}
+                      </span>
+                    </div>
+                    <button
+                      className="text-red-500 hover:text-red-700 text-sm"
+                      onClick={() => removeFromCart(product)}
+                    >
+                      Eliminar
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-4 font-bold text-lg text-gray-700">
+                Total: ${totalPrice.toFixed(2)}
+              </div>
+            </>
+          )}
         </div>
         <button
           className="absolute top-4 right-4 text-emerald-600 hover:text-green-400"
           onClick={toggleCart}
         >
           Cerrar
+        </button>
+        <button
+          className="absolute bottom-4 right-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+          onClick={finishBuy}
+        >
+          Finalizar compra
         </button>
       </div>
 

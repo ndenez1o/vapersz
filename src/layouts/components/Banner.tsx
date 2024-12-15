@@ -5,9 +5,6 @@ import BGFrameMobile from '../../assets/bg-frame-mobile.svg';
 const mockData = [
   { id: 1, name: "Ignite" },
   { id: 2, name: "Lost Mary" },
-  { id: 3, name: "Geek Bar" },
-  { id: 4, name: "Elf Bar" },
-  { id: 5, name: "Air Bar" },
 ];
 
 function Banner() {
