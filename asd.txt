@@ -1,0 +1,8 @@
+brand: "VAPERSZ",
+model: "V12",
+taste: "Oil",
+puffs: "20000",
+description: "oil",
+price: "30000",
+image: "https://d22fxaf9t8d39k.cloudfront.net/ad8beaa157e8b4f89394fa70cc60a82a9ed14c9fbee4b081b86f988b9c929ca0150910.png",
+available: true
