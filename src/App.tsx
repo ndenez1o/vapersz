@@ -12,34 +12,36 @@ import Cart from "./pages/cart";
 import Login from "./pages/login";
 import Checkout from "./pages/checkout";
 import { ProductProvider } from "./context/ProductContext";
+import { CartProvider } from "./context/CartContext"; // Importar el CartProvider
 
 function App() {
   return (
     <ProductProvider>
-      {" "}
-      <Router>
-        <Navbar />
-        <WhatsAppButton />
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Banner />
-                <ProductsContainer />
-                <Info />
-              </>
-            }
-          />
-          <Route path="/login" element={<Login />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/ignite" element={<IgnitePage />} />
-          <Route path="lost-mary" element={<LostMaryPage />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="*" element={<PageNotFound />} />
-        </Routes>
-        <Footer />
-      </Router>
+      <CartProvider> {/* Envolver con CartProvider */}
+        <Router>
+          <Navbar />
+          <WhatsAppButton />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <>
+                  <Banner />
+                  <ProductsContainer />
+                  <Info />
+                </>
+              }
+            />
+            <Route path="/login" element={<Login />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/ignite" element={<IgnitePage />} />
+            <Route path="lost-mary" element={<LostMaryPage />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+          <Footer />
+        </Router>
+      </CartProvider>
     </ProductProvider>
   );
 }

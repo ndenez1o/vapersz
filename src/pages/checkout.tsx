@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 
 function Checkout() {
   const [formData, setFormData] = useState({
@@ -16,9 +17,34 @@ function Checkout() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   alert("Pago realizado con éxito!");
+  // };
+    const handleSubmit = (e) => {
     e.preventDefault();
-    alert("Pago realizado con éxito!");
+    const formData = new FormData(e.target);
+    const message = generateWhatsAppMessage(Object.fromEntries(formData));
+    const phoneNumber = "+5492346619951";
+    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`);
+  };
+
+  const location = useLocation();
+  const { cart, totalPrice } = location.state || { cart: [], totalPrice: 0 };
+
+  const generateWhatsAppMessage = (formData) => {
+    const productList = cart
+      .map(
+        (item) =>
+          `${item.brand} - ${item.model} (${item.quantity || 1} x $${item.price})`
+      )
+      .join("\n");
+    return `Hola, mi nombre es ${formData.name}. 
+He realizado la siguiente compra: 
+${productList}
+Total: $${totalPrice.toFixed(2)}
+Dirección: ${formData.address}, ${formData.city}, CP ${formData.zipCode}.
+Correo: ${formData.email}`;
   };
 
   return (
