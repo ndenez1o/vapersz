@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import Checkout from "../../pages/checkout";
 import { FaShoppingCart } from "react-icons/fa";
 import Logo from "../../assets/logo.svg";
 import { useCart } from "../../context/CartContext";
 import { useNavigate } from "react-router-dom"; // Para redirigir a Checkout
+
 function Navbar() {
   const { cart, removeFromCart } = useCart();
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -26,7 +26,7 @@ function Navbar() {
   const finishBuy = () => {
     // Al finalizar, redirigir al Checkout
     setIsCartOpen(false);
-    navigate("/checkout");
+    navigate("/checkout", { state: { cart, totalPrice } });
   };
 
   return (
